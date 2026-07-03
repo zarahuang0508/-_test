@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HR Pro 甘特圖專案管理系統</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;--panel:#ffffff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--primary:#2563eb;--primary-dark:#1d4ed8;--green:#16a34a;--yellow:#d97706;--red:#dc2626;--purple:#7c3aed;--gray:#9ca3af;--shadow:0 12px 30px rgba(15,23,42,.08);--radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#eef4ff 0%,var(--bg) 28%);font-family:Arial,"Microsoft JhengHei",sans-serif;color:var(--text)}
+    header{padding:28px 30px 18px;display:flex;gap:18px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
+    .title h1{margin:0;font-size:28px;letter-spacing:.2px}.title p{margin:8px 0 0;color:var(--muted);line-height:1.6}.badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;background:#e0ecff;color:#1e40af;border-radius:999px;font-weight:700;font-size:13px;margin-bottom:10px}
+    main{padding:0 30px 34px}.layout{display:grid;grid-template-columns:320px 1fr;gap:18px}.card{background:var(--panel);border:1px solid rgba(229,231,235,.9);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .side{padding:18px;position:sticky;top:18px;align-self:start}.side h2,.content h2{font-size:16px;margin:0 0 14px}.field{margin-bottom:12px}.field label{display:block;font-size:12px;font-weight:700;color:#4b5563;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:11px;padding:10px 11px;font:inherit;background:#fff}.field textarea{min-height:72px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.btn{border:0;border-radius:12px;padding:10px 13px;font-weight:700;cursor:pointer;background:#e5e7eb;color:#111827;transition:.18s}.btn:hover{transform:translateY(-1px);filter:brightness(.98)}.btn.primary{background:var(--primary);color:#fff}.btn.danger{background:#fee2e2;color:#991b1b}.btn.green{background:#dcfce7;color:#166534}.btn.ghost{background:#f3f4f6;color:#374151}.btn.small{padding:7px 9px;font-size:12px;border-radius:9px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.stat{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:12px}.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
+    .content{padding:18px;overflow:hidden}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.toolbar-left,.toolbar-right{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.seg{display:flex;background:#eef2ff;border-radius:12px;padding:4px}.seg button{border:0;background:transparent;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:700;color:#475569}.seg button.active{background:#fff;color:var(--primary);box-shadow:0 2px 8px rgba(30,64,175,.12)}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px;margin-bottom:16px;max-height:320px}table{width:100%;border-collapse:collapse;min-width:1160px}th,td{border-bottom:1px solid var(--line);padding:9px;text-align:left;font-size:13px;white-space:nowrap}th{background:#f8fafc;position:sticky;top:0;z-index:1;color:#475569;font-size:12px}td input,td select{width:100%;border:1px solid #d1d5db;border-radius:8px;padding:7px;font:inherit}td input[type="number"]{width:82px}.idchip{display:inline-flex;align-items:center;justify-content:center;background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:5px 8px;font-weight:800;font-size:12px}.status{font-weight:800;border-radius:999px;padding:5px 9px;display:inline-block;font-size:12px}.s-not{background:#f3f4f6;color:#4b5563}.s-progress{background:#dbeafe;color:#1d4ed8}.s-done{background:#dcfce7;color:#166534}.s-late{background:#fee2e2;color:#991b1b}.s-risk{background:#fef3c7;color:#92400e}
+    .gantt-wrap{border:1px solid var(--line);border-radius:16px;overflow:auto;background:#fff;position:relative}.gantt-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);background:#fbfdff;position:sticky;left:0;z-index:2}.legend{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:12px}.dot{display:inline-block;width:10px;height:10px;border-radius:999px;margin-right:5px}.dot.blue{background:var(--primary)}.dot.green{background:var(--green)}.dot.red{background:var(--red)}.dot.purple{background:var(--purple)}.dot.gray{background:var(--gray)}
+    svg{display:block;min-width:100%;background:#fff}.axis text{font-size:11px;fill:#64748b}.grid{stroke:#e5e7eb;stroke-width:1}.rowline{stroke:#f1f5f9;stroke-width:1}.task-label{font-size:12px;fill:#334155}.owner-label{font-size:11px;fill:#94a3b8}.bar{rx:8;ry:8}.progress{rx:8;ry:8;opacity:.92}.bar-text{font-size:11px;fill:#fff;font-weight:700}.milestone{fill:#7c3aed}.today{stroke:#ef4444;stroke-width:2;stroke-dasharray:5 5}.base{fill:#cbd5e1}.dep{stroke:#64748b;stroke-width:1.8;fill:none;marker-end:url(#arrow)}.critical{stroke:#ef4444;stroke-width:2.3}.critical-bar{stroke:#ef4444;stroke-width:2.2}.hint{font-size:12px;color:var(--muted);line-height:1.6;margin-top:10px}.toast{position:fixed;right:24px;bottom:24px;background:#111827;color:#fff;padding:12px 14px;border-radius:12px;box-shadow:var(--shadow);opacity:0;transform:translateY(12px);pointer-events:none;transition:.25s;z-index:99}.toast.show{opacity:1;transform:translateY(0)}.hidden{display:none!important}
+    .summary-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.pill{padding:8px 11px;border-radius:999px;background:#f8fafc;border:1px solid var(--line);font-size:12px;color:#475569}.pill b{color:#111827}.file{display:none}
+    @media(max-width:980px){.layout{grid-template-columns:1fr}.side{position:static}header,main{padding-left:16px;padding-right:16px}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">
+      <div class="badge">HR Project Timeline System</div>
+      <h1>HR Pro 甘特圖專案管理系統</h1>
+      <p>適用招募、Onboarding、教育訓練、績效評估、敬業度調查與 HR 專案追蹤，可編輯表格並同步產生甘特圖。</p>
+    </div>
+    <div class="btns">
+      <button class="btn primary" onclick="addTask()">＋ 新增任務</button>
+      <button class="btn green" onclick="saveLocal()">儲存</button>
+      <button class="btn ghost" onclick="loadLocal()">讀取</button>
+    </div>
+  </header>
+  <main>
+    <div class="layout">
+      <aside class="card side">
+        <h2>專案設定</h2>
+        <div class="field"><label>專案名稱</label><input id="projectName" value="品牌商品上市專案" oninput="render()"></div>
+        <div class="field"><label>專案說明</label><textarea id="projectDesc" oninput="render()">用於追蹤設計、打樣、生產、上架與行銷素材進度。</textarea></div>
+        <div class="row">
+          <div class="field"><label>預設檢視</label><select id="viewMode" onchange="render()"><option value="day">日</option><option value="week" selected>週</option><option value="month">月</option></select></div>
+          <div class="field"><label>列高</label><select id="rowHeight" onchange="render()"><option value="42">緊湊</option><option value="54" selected>標準</option><option value="68">寬鬆</option></select></div>
+        </div>
+        <div class="field"><label>篩選狀態</label><select id="statusFilter" onchange="render()"><option value="all">全部</option><option>未開始</option><option>進行中</option><option>已完成</option><option>延遲</option><option>風險</option></select></div>
+        <div class="field"><label>搜尋任務 / 負責人</label><input id="searchText" placeholder="例如：設計、Zara" oninput="render()"></div>
+        <div class="stats">
+          <div class="stat"><b id="totalCount">0</b><span>任務數</span></div>
+          <div class="stat"><b id="avgProgress">0%</b><span>平均進度</span></div>
+          <div class="stat"><b id="lateCount">0</b><span>延遲 / 風險</span></div>
+          <div class="stat"><b id="durationCount">0</b><span>專案天數</span></div>
+        </div>
+        <div class="btns">
+          <button class="btn small" onclick="loadSample()">範例資料</button>
+          <button class="btn small" onclick="exportCSV()">匯出 CSV</button>
+          <button class="btn small" onclick="exportJSON()">匯出 JSON</button>
+          <button class="btn small" onclick="document.getElementById('importFile').click()">匯入 JSON</button>
+          <button class="btn small" onclick="downloadSVG()">下載甘特圖 SVG</button>
+          <button class="btn small danger" onclick="resetAll()">清空</button>
+        </div>
+        <input class="file" id="importFile" type="file" accept="application/json" onchange="importJSON(event)">
+        <p class="hint">依賴關係請填前置任務 ID，例如 <b>T1</b>；多個依賴可用逗號分隔。任務類型選「里程碑」時，甘特圖會顯示菱形節點。</p>
+      </aside>
+      <section class="card content">
+        <div class="toolbar">
+          <div class="toolbar-left"><h2 style="margin:0">任務資料表</h2><div class="seg"><button id="seg-day" onclick="setView('day')">日</button><button id="seg-week" onclick="setView('week')" class="active">週</button><button id="seg-month" onclick="setView('month')">月</button></div></div>
+          <div class="toolbar-right"><button class="btn small" onclick="sortByDate()">依日期排序</button><button class="btn small" onclick="autoStatus()">自動判斷狀態</button></div>
+        </div>
+        <div class="summary-bar"><span class="pill">專案：<b id="projectNameView">-</b></span><span class="pill">起訖：<b id="rangeView">-</b></span><span class="pill">今日線：<b>紅色虛線</b></span><span class="pill">基準線：<b>灰色細條</b></span></div>
+        <div class="table-wrap"><table id="taskTable"><thead><tr><th>ID</th><th>任務名稱</th><th>負責人</th><th>類型</th><th>開始日期</th><th>結束日期</th><th>基準開始</th><th>基準結束</th><th>進度%</th><th>狀態</th><th>依賴</th><th>備註</th><th>操作</th></tr></thead><tbody></tbody></table></div>
+        <div class="gantt-wrap">
+          <div class="gantt-head"><strong>甘特圖</strong><div class="legend"><span><i class="dot blue"></i>進行中</span><span><i class="dot green"></i>已完成</span><span><i class="dot red"></i>延遲 / 關鍵</span><span><i class="dot purple"></i>里程碑</span><span><i class="dot gray"></i>基準線</span></div></div>
+          <svg id="ganttSvg" width="1200" height="420"></svg>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="toast" class="toast"></div>
+<script>
+const DAY=24*60*60*1000;
+let tasks=[];
+const statusOptions=['未開始','進行中','已完成','延遲','風險'];
+const typeOptions=['任務','里程碑','摘要'];
+function uid(){return 'T'+(tasks.length?Math.max(...tasks.map(t=>parseInt(String(t.id).replace(/\D/g,''))||0))+1:1)}
+function fmt(d){const x=new Date(d); if(isNaN(x))return ''; return x.toISOString().slice(0,10)}
+function parse(d){return new Date(d+'T00:00:00')}
+function days(a,b){return Math.max(1,Math.round((parse(b)-parse(a))/DAY)+1)}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800)}
+function color(t){if(t.type==='里程碑')return '#7c3aed'; if(t.status==='已完成')return '#16a34a'; if(t.status==='延遲')return '#dc2626'; if(t.status==='風險')return '#d97706'; if(t.status==='未開始')return '#94a3b8'; return '#2563eb'}
+function statusClass(s){return {'未開始':'s-not','進行中':'s-progress','已完成':'s-done','延遲':'s-late','風險':'s-risk'}[s]||'s-not'}
+function loadSample(){tasks=[
+{id:'T1',name:'HR 年度專案 Kick-off 與需求盤點',owner:'HRBP / L&D',type:'任務',start:'2026-07-03',end:'2026-07-07',baseStart:'2026-07-03',baseEnd:'2026-07-07',progress:100,status:'已完成',deps:'',note:'確認招募、培訓、績效與員工體驗重點'},
+{id:'T2',name:'Headcount 與招募需求確認',owner:'Recruiter',type:'任務',start:'2026-07-08',end:'2026-07-15',baseStart:'2026-07-08',baseEnd:'2026-07-14',progress:75,status:'進行中',deps:'T1',note:'與 Hiring Manager 對齊 JD、面試流程、預計到職日'},
+{id:'T3',name:'招募渠道開啟與人才搜尋',owner:'Recruiter',type:'任務',start:'2026-07-12',end:'2026-07-26',baseStart:'2026-07-11',baseEnd:'2026-07-25',progress:45,status:'進行中',deps:'T2',note:'104、LinkedIn、內推、獵頭渠道同步'},
+{id:'T4',name:'面試安排與候選人追蹤',owner:'Recruiter / HM',type:'任務',start:'2026-07-18',end:'2026-08-05',baseStart:'2026-07-17',baseEnd:'2026-08-02',progress:30,status:'風險',deps:'T3',note:'追蹤候選人進度，避免面試等待時間過長'},
+{id:'T5',name:'Offer 核准與發放',owner:'HR / C&B',type:'里程碑',start:'2026-08-08',end:'2026-08-08',baseStart:'2026-08-05',baseEnd:'2026-08-05',progress:0,status:'未開始',deps:'T4',note:'確認薪資預算、核薪與錄取通知'},
+{id:'T6',name:'新人 Onboarding 課程與系統權限準備',owner:'L&D / HR Ops',type:'任務',start:'2026-08-01',end:'2026-08-14',baseStart:'2026-07-30',baseEnd:'2026-08-12',progress:20,status:'進行中',deps:'T2',note:'新人訓練、Buddy、帳號權限、到職通知'},
+{id:'T7',name:'新人到職與 Orientation',owner:'L&D',type:'里程碑',start:'2026-08-17',end:'2026-08-17',baseStart:'2026-08-15',baseEnd:'2026-08-15',progress:0,status:'未開始',deps:'T5,T6',note:'新人報到、公司介紹、必修課程說明'},
+{id:'T8',name:'試用期追蹤與主管回饋收集',owner:'HRBP',type:'任務',start:'2026-08-24',end:'2026-09-18',baseStart:'2026-08-22',baseEnd:'2026-09-15',progress:0,status:'未開始',deps:'T7',note:'30/60/90 天追蹤、主管回饋、風險個案處理'},
+{id:'T9',name:'全員教育訓練需求調查 LNA',owner:'L&D',type:'任務',start:'2026-07-20',end:'2026-08-02',baseStart:'2026-07-18',baseEnd:'2026-07-31',progress:60,status:'進行中',deps:'T1',note:'蒐集各部門課程需求與能力落差'},
+{id:'T10',name:'訓練課程設計與講師確認',owner:'L&D',type:'任務',start:'2026-08-03',end:'2026-08-21',baseStart:'2026-08-01',baseEnd:'2026-08-18',progress:25,status:'風險',deps:'T9',note:'確認課程大綱、講師、教材與實作案例'},
+{id:'T11',name:'績效評估流程與主管溝通',owner:'HRBP / C&B',type:'任務',start:'2026-09-01',end:'2026-09-18',baseStart:'2026-08-28',baseEnd:'2026-09-15',progress:0,status:'未開始',deps:'T1',note:'校準評估時程、評分原則與主管溝通重點'},
+{id:'T12',name:'員工敬業度調查上線',owner:'People Team',type:'里程碑',start:'2026-09-25',end:'2026-09-25',baseStart:'2026-09-22',baseEnd:'2026-09-22',progress:0,status:'未開始',deps:'T10,T11',note:'發送調查、追蹤填答率、後續產出行動計畫'}
+];render();toast('已載入 HR 範例資料')}
+function addTask(){const today=fmt(new Date());tasks.push({id:uid(),name:'新任務',owner:'',type:'任務',start:today,end:today,baseStart:'',baseEnd:'',progress:0,status:'未開始',deps:'',note:''});render();}
+function delTask(id){if(confirm('確定刪除 '+id+'？')){tasks=tasks.filter(t=>t.id!==id);render();}}
+function update(id,key,val){const t=tasks.find(x=>x.id===id); if(!t)return; if(key==='progress')val=Math.max(0,Math.min(100,Number(val)||0)); t[key]=val; if(key==='start'&&parse(t.end)<parse(val))t.end=val; if(key==='end'&&parse(val)<parse(t.start))t.start=val; render(false);}
+function renderTable(list){const tb=document.querySelector('#taskTable tbody');tb.innerHTML='';list.forEach(t=>{const tr=document.createElement('tr');tr.innerHTML=`<td><span class="idchip">${t.id}</span></td><td><input value="${esc(t.name)}" onchange="update('${t.id}','name',this.value)"></td><td><input value="${esc(t.owner)}" onchange="update('${t.id}','owner',this.value)"></td><td><select onchange="update('${t.id}','type',this.value)">${typeOptions.map(o=>`<option ${o===t.type?'selected':''}>${o}</option>`).join('')}</select></td><td><input type="date" value="${t.start}" onchange="update('${t.id}','start',this.value)"></td><td><input type="date" value="${t.end}" onchange="update('${t.id}','end',this.value)"></td><td><input type="date" value="${t.baseStart||''}" onchange="update('${t.id}','baseStart',this.value)"></td><td><input type="date" value="${t.baseEnd||''}" onchange="update('${t.id}','baseEnd',this.value)"></td><td><input type="number" min="0" max="100" value="${t.progress}" onchange="update('${t.id}','progress',this.value)"></td><td><select onchange="update('${t.id}','status',this.value)">${statusOptions.map(o=>`<option ${o===t.status?'selected':''}>${o}</option>`).join('')}</select></td><td><input placeholder="T1,T2" value="${esc(t.deps||'')}" onchange="update('${t.id}','deps',this.value)"></td><td><input value="${esc(t.note||'')}" onchange="update('${t.id}','note',this.value)"></td><td><button class="btn small danger" onclick="delTask('${t.id}')">刪除</button></td>`;tb.appendChild(tr);});}
+function esc(s){return String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function filtered(){const sf=document.getElementById('statusFilter').value;const q=document.getElementById('searchText').value.trim().toLowerCase();return tasks.filter(t=>(sf==='all'||t.status===sf)&&(!q||[t.name,t.owner,t.note,t.id].join(' ').toLowerCase().includes(q)))}
+function render(updateTable=true){document.querySelectorAll('.seg button').forEach(b=>b.classList.remove('active'));document.getElementById('seg-'+document.getElementById('viewMode').value).classList.add('active');const list=filtered();if(updateTable)renderTable(list);renderStats();renderGantt(list);}
+function renderStats(){const total=tasks.length;const avg=total?Math.round(tasks.reduce((s,t)=>s+(Number(t.progress)||0),0)/total):0;const late=tasks.filter(t=>t.status==='延遲'||t.status==='風險').length;let min='',max='';if(tasks.length){min=tasks.reduce((a,t)=>!a||parse(t.start)<parse(a)?t.start:a,'');max=tasks.reduce((a,t)=>!a||parse(t.end)>parse(a)?t.end:a,'')}document.getElementById('totalCount').textContent=total;document.getElementById('avgProgress').textContent=avg+'%';document.getElementById('lateCount').textContent=late;document.getElementById('durationCount').textContent=(min&&max)?days(min,max):0;document.getElementById('projectNameView').textContent=document.getElementById('projectName').value||'-';document.getElementById('rangeView').textContent=(min&&max)?`${min} ~ ${max}`:'-';}
+function renderGantt(list){const svg=document.getElementById('ganttSvg');svg.innerHTML='';const rowH=Number(document.getElementById('rowHeight').value);const left=250,top=58,right=24,bottom=34;const allDates=[];list.forEach(t=>{allDates.push(t.start,t.end); if(t.baseStart)allDates.push(t.baseStart); if(t.baseEnd)allDates.push(t.baseEnd)});if(!allDates.length){svg.setAttribute('height',260);svg.innerHTML='<text x="32" y="70" fill="#64748b">請先新增任務或載入範例資料</text>';return}let min=parse(allDates.reduce((a,d)=>parse(d)<parse(a)?d:a));let max=parse(allDates.reduce((a,d)=>parse(d)>parse(a)?d:a));min=new Date(min.getTime()-DAY*2);max=new Date(max.getTime()+DAY*3);const totalDays=Math.max(1,Math.round((max-min)/DAY));const unitMode=document.getElementById('viewMode').value;let px=unitMode==='day'?36:unitMode==='week'?15:7;let chartW=Math.max(760,totalDays*px);let width=left+chartW+right;let height=top+list.length*rowH+bottom;svg.setAttribute('width',width);svg.setAttribute('height',height);defs(svg);const x=d=>left+((parse(d)-min)/DAY)*px;const y=i=>top+i*rowH+rowH/2;
+// axis/grid
+let step=unitMode==='day'?1:unitMode==='week'?7:30;for(let i=0;i<=totalDays;i+=step){const date=new Date(min.getTime()+i*DAY);line(svg,left+i*px,top-24,left+i*px,height-bottom,'grid');text(svg,left+i*px+4,top-33,labelDate(date,unitMode),'axis');}
+line(svg,left,top-24,left,height-bottom,'grid');
+// today
+const today=fmt(new Date());if(parse(today)>=min&&parse(today)<=max)line(svg,x(today),top-28,x(today),height-bottom,'today');
+// rows and labels
+list.forEach((t,i)=>{line(svg,0,top+i*rowH+rowH,left+chartW,height=top+i*rowH+rowH,'rowline');text(svg,18,y(i)-4,`${t.id}  ${t.name}`,'task-label');text(svg,18,y(i)+13,t.owner||'未指定','owner-label');});
+// dependencies behind bars
+list.forEach((t,i)=>{(t.deps||'').split(',').map(s=>s.trim()).filter(Boolean).forEach(dep=>{const j=list.findIndex(z=>z.id===dep);if(j>=0){const from=list[j], x1=x(from.end)+8, y1=y(j), x2=x(t.start)-8, y2=y(i);path(svg,`M${x1} ${y1} C ${x1+28} ${y1}, ${x2-28} ${y2}, ${x2} ${y2}`,'dep '+(isCritical(t,list)?'critical':''));}})});
+// bars
+list.forEach((t,i)=>{const yy=y(i);if(t.baseStart&&t.baseEnd){rect(svg,x(t.baseStart),yy+13,Math.max(6,x(t.baseEnd)-x(t.baseStart)+px),6,'base')}
+ if(t.type==='里程碑'){diamond(svg,x(t.start),yy,11,'milestone');text(svg,x(t.start)+16,yy+4,`${t.progress}%`,'owner-label');}
+ else{const bx=x(t.start), bw=Math.max(12,x(t.end)-x(t.start)+px);rect(svg,bx,yy-11,bw,22,'bar '+(isCritical(t,list)?'critical-bar':''),color(t));rect(svg,bx,yy-11,bw*(Number(t.progress)||0)/100,22,'progress',shade(color(t)));text(svg,bx+8,yy+4,`${t.progress}%`,'bar-text');}
+ });}
+function labelDate(d,mode){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');if(mode==='month')return `${y}/${m}`;return `${m}/${day}`}
+function defs(svg){svg.insertAdjacentHTML('beforeend',`<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#64748b" /></marker></defs>`)}
+function el(svg,name,attrs){const e=document.createElementNS('http://www.w3.org/2000/svg',name);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));svg.appendChild(e);return e}
+function line(svg,x1,y1,x2,y2,cls){el(svg,'line',{x1,y1,x2,y2,class:cls})}function rect(svg,x,y,width,height,cls,fill){const a={x,y,width,height,class:cls};if(fill)a.fill=fill;el(svg,'rect',a)}function text(svg,x,y,txt,cls){const t=el(svg,'text',{x,y,class:cls});t.textContent=txt;return t}function path(svg,d,cls){el(svg,'path',{d,class:cls})}function diamond(svg,cx,cy,r,cls){el(svg,'polygon',{points:`${cx},${cy-r} ${cx+r},${cy} ${cx},${cy+r} ${cx-r},${cy}`,class:cls})}
+function shade(hex){return hex===' #dc2626'?hex:hex;}
+function isCritical(t,list){return t.status==='延遲'||(t.deps||'').split(',').some(id=>{const d=list.find(x=>x.id===id.trim());return d&&d.status==='延遲'})}
+function setView(v){document.getElementById('viewMode').value=v;render();}
+function sortByDate(){tasks.sort((a,b)=>parse(a.start)-parse(b.start));render();toast('已依日期排序')}
+function autoStatus(){const today=parse(fmt(new Date()));tasks.forEach(t=>{if(Number(t.progress)>=100)t.status='已完成';else if(parse(t.end)<today)t.status='延遲';else if(parse(t.start)>today)t.status='未開始';else t.status='進行中';});render();toast('已自動更新狀態')}
+function saveLocal(){localStorage.setItem('proGanttData',JSON.stringify({projectName:projectName.value,projectDesc:projectDesc.value,tasks}));toast('已儲存到此瀏覽器')}
+function loadLocal(){const raw=localStorage.getItem('proGanttData');if(!raw)return toast('尚無本機儲存資料');const d=JSON.parse(raw);projectName.value=d.projectName||'';projectDesc.value=d.projectDesc||'';tasks=d.tasks||[];render();toast('已讀取本機資料')}
+function resetAll(){if(confirm('確定清空所有任務？')){tasks=[];render();}}
+function exportCSV(){const head=['ID','任務名稱','負責人','類型','開始日期','結束日期','基準開始','基準結束','進度','狀態','依賴','備註'];const rows=tasks.map(t=>[t.id,t.name,t.owner,t.type,t.start,t.end,t.baseStart,t.baseEnd,t.progress,t.status,t.deps,t.note]);download('gantt_tasks.csv',[head,...rows].map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv;charset=utf-8')}
+function exportJSON(){download('gantt_project.json',JSON.stringify({projectName:projectName.value,projectDesc:projectDesc.value,tasks},null,2),'application/json')}
+function importJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);projectName.value=d.projectName||projectName.value;projectDesc.value=d.projectDesc||projectDesc.value;tasks=d.tasks||[];render();toast('匯入成功')}catch(err){alert('JSON 格式錯誤')}};r.readAsText(f);e.target.value=''}
+function downloadSVG(){const svg=document.getElementById('ganttSvg').cloneNode(true);svg.setAttribute('xmlns','http://www.w3.org/2000/svg');const blob=new Blob([new XMLSerializer().serializeToString(svg)],{type:'image/svg+xml'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='gantt_chart.svg';a.click();URL.revokeObjectURL(a.href)}
+function download(name,content,type){const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
+loadSample();
+</script>
+</body>
+</html>
